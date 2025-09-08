@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ProductHub - Modern Interactive Product Explorer with beautiful animations" />
+    <meta name="keywords" content="products, shopping, e-commerce, react, framer-motion" />
+    <meta name="author" content="ProductHub Team" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://producthub.demo/" />
+    <meta property="og:title" content="ProductHub - Interactive Product Explorer" />
+    <meta property="og:description" content="Discover amazing products with modern UI and smooth animations" />
+    <meta property="og:image" content="/og-image.jpg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://producthub.demo/" />
+    <meta property="twitter:title" content="ProductHub - Interactive Product Explorer" />
+    <meta property="twitter:description" content="Discover amazing products with modern UI and smooth animations" />
+    <meta property="twitter:image" content="/og-image.jpg" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- Preload critical fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- PWA Support -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="ProductHub" />
+    
+    <!-- Performance hints -->
+    <link rel="dns-prefetch" href="https://dummyjson.com" />
+    <link rel="preconnect" href="https://dummyjson.com" />
+    
+    <title>ProductHub - Interactive Product Explorer</title>
+    
+    <!-- Critical CSS for above-the-fold content -->
+    <style>
+      /* Critical CSS - Prevents flash of unstyled content */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #eff6ff 100%);
+        line-height: 1.6;
+        color: #1e293b;
+        overflow-x: hidden;
+      }
+      
+      /* Loading screen */
+      #initial-loading {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #eff6ff 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
+      }
+      
+      #initial-loading.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      .loading-logo {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #3b82f6, #e441ff);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+        animation: pulse 2s ease-in-out infinite;
+        box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
+      }
+      
+      .loading-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #3b82f6, #e441ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 12px;
+      }
+      
+      .loading-subtitle {
+        color: #64748b;
+        font-size: 0.9rem;
+      }
+      
+      .loading-spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid #e2e8f0;
+        border-top: 3px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-top: 20px;
+      }
+      
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Root container */
+      #root {
+        min-height: 100vh;
+        opacity: 0;
+        transition: opacity 0.5s ease-in;
+      }
+      
+      #root.loaded {
+        opacity: 1;
+      }
+      
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      
+      /* Selection styling */
+      ::selection {
+        background: rgba(59, 130, 246, 0.2);
+        color: #1e3a8a;
+      }
+      
+      /* Focus visible for accessibility */
+      :focus-visible {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+      }
+      
+      /* Reduced motion preferences */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Initial Loading Screen -->
+    <div id="initial-loading">
+      <div class="loading-logo">
+        <svg width="40" height="40" fill="white" viewBox="0 0 24 24">
+          <path d="M19 7h-1V6a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v7a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4v-1h1a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM16 13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v7zm3-2h-1V9h1v2z"/>
+        </svg>
+      </div>
+      <div class="loading-text">ProductHub</div>
+      <div class="loading-subtitle">Loading your shopping experience...</div>
+      <div class="loading-spinner"></div>
+    </div>
+
+    <!-- React App Root -->
+    <div id="root" role="main"></div>
+    
+    <!-- Fallback for users with JavaScript disabled -->
+    <noscript>
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #eff6ff 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+        z-index: 10000;
+      ">
+        <div style="
+          max-width: 500px;
+          background: white;
+          padding: 40px;
+          border-radius: 20px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        ">
+          <div style="
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6, #e441ff);
+            border-radius: 15px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">
+            <svg width="30" height="30" fill="white" viewBox="0 0 24 24">
+              <path d="M19 7h-1V6a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v7a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4v-1h1a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM16 13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v7zm3-2h-1V9h1v2z"/>
+            </svg>
+          </div>
+          <h1 style="
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #3b82f6, #e441ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          ">JavaScript Required</h1>
+          <p style="
+            color: #64748b;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+          ">
+            ProductHub requires JavaScript to provide you with an amazing interactive shopping experience. 
+            Please enable JavaScript in your browser settings to continue.
+          </p>
+          <div style="
+            padding: 12px 20px;
+            background: #f8fafc;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #475569;
+          ">
+            This app features modern animations, real-time search, and dynamic product filtering that require JavaScript to function properly.
+          </div>
+        </div>
+      </div>
+    </noscript>
+
+    <!-- Performance monitoring script -->
+    <script>
+      // Performance timing
+      window.addEventListener('load', function() {
+        if ('performance' in window) {
+          setTimeout(function() {
+            const perfData = performance.timing;
+            const loadTime = perfData.loadEventEnd - perfData.navigationStart;
+            const domReady = perfData.domContentLoadedEventEnd - perfData.navigationStart;
+            
+            console.log(`%c🚀 Performance Metrics`, 'color: #3b82f6; font-weight: bold;');
+            console.log(`📊 Total Load Time: ${loadTime}ms`);
+            console.log(`⚡ DOM Ready: ${domReady}ms`);
+            
+            // Send to analytics if available
+            if (typeof gtag === 'function') {
+              gtag('event', 'page_load_time', {
+                custom_parameter: loadTime
+              });
+            }
+          }, 0);
+        }
+      });
+
+      // Error tracking
+      window.addEventListener('error', function(e) {
+        console.error('Global error:', e.error);
+        
+        // Send to error tracking service if available
+        if (typeof gtag === 'function') {
+          gtag('event', 'exception', {
+            description: e.error?.message || 'Unknown error',
+            fatal: false
+          });
+        }
+      });
+
+      // Unhandled promise rejections
+      window.addEventListener('unhandledrejection', function(e) {
+        console.error('Unhandled promise rejection:', e.reason);
+        
+        if (typeof gtag === 'function') {
+          gtag('event', 'exception', {
+            description: e.reason?.message || 'Unhandled promise rejection',
+            fatal: false
+          });
+        }
+      });
+
+      // Hide loading screen when React app loads
+      function hideLoadingScreen() {
+        const loadingElement = document.getElementById('initial-loading');
+        const rootElement = document.getElementById('root');
+        
+        if (loadingElement) {
+          loadingElement.classList.add('fade-out');
+          setTimeout(() => {
+            loadingElement.remove();
+            if (rootElement) {
+              rootElement.classList.add('loaded');
+            }
+          }, 500);
+        }
+      }
+
+      // Auto-hide loading screen after maximum wait time
+      setTimeout(hideLoadingScreen, 10000);
+
+      // Expose function for React app to call
+      window.hideLoadingScreen = hideLoadingScreen;
+    </script>
+
+    <!-- Module script for Vite -->
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
