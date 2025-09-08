@@ -6,7 +6,8 @@ import {
   ShoppingCart, 
   Eye,
   Zap,
-  Tag
+  Tag,
+  Package
 } from 'lucide-react';
 import clsx from 'clsx';
 import { useAppContext } from '@contexts/AppContext';
